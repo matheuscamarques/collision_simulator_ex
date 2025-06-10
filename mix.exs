@@ -19,7 +19,7 @@ defmodule CollisionSimulator.MixProject do
   def application do
     [
       mod: {CollisionSimulator.Application, []},
-      extra_applications: [:logger, :runtime_tools, :observer, :wx]
+      extra_applications: [:logger, :runtime_tools, :observer, :wx, :os_mon]
     ]
   end
 
