@@ -44,29 +44,28 @@ Hooks.CanvasHook = {
   },
 
   drawFrame() {
-    if (!this.ctx) return;
+  if (!this.ctx) return;
 
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  const { ctx, canvas } = this;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const positions = this.particleData.positions;
-    const radii = this.particleData.radii;
+  const { positions, radii } = this.particleData;
+  const len = positions.length;
 
-    if (positions && radii && positions.length === radii.length) {
-      positions.forEach((pos, i) => {
-        const [x, y] = pos;
-        const radius = radii[i];
+  for (let i = 0; i < len; i++) {
+    const [x, y] = positions[i];
+    const r = radii[i];
 
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, radius, 0, Math.PI * 2);
-        this.ctx.fillStyle = "rgba(59, 130, 246, 0.8)";
-        this.ctx.fill();
-        this.ctx.strokeStyle = "rgba(30, 64, 175, 1)";
-        this.ctx.lineWidth = 1;
-        this.ctx.stroke();
-        this.ctx.closePath();
-      });
-    }
-  },
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(59, 130, 246, 0.8)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(30, 64, 175, 1)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.closePath();
+  }
+},
 };
 
 let csrfToken = document

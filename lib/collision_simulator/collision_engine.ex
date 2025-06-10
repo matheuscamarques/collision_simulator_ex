@@ -65,9 +65,9 @@ defmodule CollisionSimulator.CollisionEngine do
   # Delta time para os cálculos de física, em segundos.
   @dt @frame_interval_ms / 1000.0
   # Número total de partículas na simulação.
-  @num_particles 25
+  @num_particles 20
   # As fronteiras do mundo da simulação.
-  @world_bounds %{x: 0.0, y: 0.0, width: 800.0, height: 600.0}
+  @world_bounds %{x: 0.0, y: 0.0, width: 500, height: 500}
   # Raio padrão para cada partícula.
   @particle_radius 5.0
   # Massa padrão para cada partícula.
@@ -298,37 +298,49 @@ defmodule CollisionSimulator.CollisionEngine do
   end
 
   @spec update_ets_batch(list(particle_id()), batch_states()) :: :ok
-  defp update_ets_batch(ids, final_states) do
-    positions_list = Nx.to_list(final_states.pos)
-    velocities_list = Nx.to_list(final_states.vel)
+  @spec update_ets_batch(list(particle_id()), batch_states()) :: :ok
+  def update_ets_batch(ids, states) do
+    positions = Nx.to_list(states.pos)
+    velocities = Nx.to_list(states.vel)
+    radii = Nx.to_list(states.radius)
+    masses = Nx.to_list(states.mass)
 
-    updates =
-      Enum.zip(ids, Enum.zip(positions_list, velocities_list))
-      |> Enum.map(fn {id, {pos_list, vel_list}} ->
-        state = %{
-          id: id,
-          pos: List.to_tuple(pos_list),
-          vel: List.to_tuple(vel_list),
-          radius: @particle_radius,
-          mass: @particle_mass
-        }
+    zipped =
+      Enum.zip([ids, positions, velocities, radii, masses])
 
-        {id, state}
-      end)
+    zipped
+    # ajustável: depende do seu workload
+    |> Stream.chunk_every(500)
+    |> Task.async_stream(
+      fn chunk ->
+        chunk
+        |> Enum.map(fn {id, [x, y], [vx, vy], [r], [m]} ->
+          {id,
+           %{
+             id: id,
+             pos: {x, y},
+             vel: {vx, vy},
+             radius: r,
+             mass: m
+           }}
+        end)
+        |> then(&:ets.insert(:particle_data, &1))
+      end,
+      max_concurrency: System.schedulers_online(),
+      timeout: :infinity
+    )
+    |> Stream.run()
 
-    :ets.insert(:particle_data, updates)
     :ok
   end
 
   @spec publish_particle_data(batch_states()) :: :ok
-  defp publish_particle_data(final_states) do
-    # Correção: Voltando a enviar uma lista de raios para manter compatibilidade.
-    num_particles_in_frame = Nx.axis_size(final_states.pos, 0)
-    radii = List.duplicate(@particle_radius, num_particles_in_frame)
+  defp publish_particle_data(%{pos: pos} = _final_states) do
+    num_particles = Nx.axis_size(pos, 0)
 
     payload = %{
-      positions: Nx.to_list(final_states.pos),
-      radii: radii
+      positions: Nx.to_list(pos),
+      radii: :lists.duplicate(num_particles, @particle_radius)
     }
 
     Phoenix.PubSub.broadcast(

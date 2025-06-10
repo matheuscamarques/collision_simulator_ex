@@ -28,8 +28,8 @@ defmodule CollisionSimulatorWeb.SimulationLive do
       <div id="simulation-wrapper" phx-hook="CanvasHook">
         <canvas
           id="physics-canvas"
-          width="800"
-          height="600"
+          width="500"
+          height="500"
           class="border border-gray-800 bg-gray-100"
           phx-update="ignore"
         >
@@ -42,7 +42,16 @@ defmodule CollisionSimulatorWeb.SimulationLive do
   end
 
   @impl true
-  def handle_info({:particle_data, payload}, socket) do
-    {:noreply, push_event(socket, "particle_update", payload)}
+  def handle_info({:particle_data, payload}, %{assigns: %{particle_data_for_hook: prev}} = socket) do
+    if payload == prev do
+      {:noreply, socket}
+    else
+      socket =
+        socket
+        |> assign(:particle_data_for_hook, payload)
+        |> push_event("particle_update", payload)
+
+      {:noreply, socket}
+    end
   end
 end
