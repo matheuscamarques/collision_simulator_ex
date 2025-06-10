@@ -1,7 +1,8 @@
 defmodule CollisionSimulatorWeb.SimulationLive do
   use CollisionSimulatorWeb, :live_view
 
-  @simulation_topic "simulation_updates"
+  # NOTA: Tópico atualizado para corresponder ao que as partículas publicam
+  @simulation_topic "particle_updates"
 
   @impl true
   def mount(_params, _session, socket) do
@@ -9,14 +10,8 @@ defmodule CollisionSimulatorWeb.SimulationLive do
       Phoenix.PubSub.subscribe(CollisionSimulator.PubSub, @simulation_topic)
     end
 
-    initial_particle_data = %{
-      positions: [],
-      radii: []
-    }
-
-    socket =
-      assign(socket, :particle_data_for_hook, initial_particle_data)
-
+    # NOTA: Não precisamos mais enviar dados iniciais para o hook.
+    # O canvas irá popular-se à medida que as atualizações chegam.
     {:ok, socket}
   end
 
@@ -37,17 +32,10 @@ defmodule CollisionSimulatorWeb.SimulationLive do
     """
   end
 
+   # NOTA: O handle_info foi completamente alterado para lidar com o novo evento.
   @impl true
-  def handle_info({:particle_data, payload}, %{assigns: %{particle_data_for_hook: prev}} = socket) do
-    if payload == prev do
-      {:noreply, socket}
-    else
-      socket =
-        socket
-        |> assign(:particle_data_for_hook, payload)
-        |> push_event("particle_update", payload)
-
-      {:noreply, socket}
-    end
+  def handle_info({:particle_moved, payload}, socket) do
+    # Simplesmente encaminha o payload da partícula para o hook no frontend
+    {:noreply, push_event(socket, "particle_moved", payload)}
   end
 end

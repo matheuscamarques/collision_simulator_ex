@@ -32,40 +32,53 @@ Hooks.CanvasHook = {
     }
 
     this.ctx = this.canvas.getContext("2d");
-    this.particleData = { positions: [], radii: [] };
+    
+    // 1. MUDANÇA: Usando um Map para armazenar as partículas por ID.
+    this.particles = new Map();
 
-    this.handleEvent("particle_update", (payload) => {
-      // payload contém {positions: [[x, y], ...], radii: [r, ...]}
-      this.particleData = payload;
-      window.requestAnimationFrame(() => this.drawFrame());
+    // 2. MUDANÇA: Escutando o novo evento "particle_moved".
+    this.handleEvent("particle_moved", (payload) => {
+      // O payload agora é de uma única partícula: {id, pos: [x, y], radius}
+      const { id, pos, radius } = payload;
+      
+      // Atualizamos os dados da partícula no Map.
+      this.particles.set(id, { x: pos[0], y: pos[1], r: radius });
     });
+    
+    // 4. MUDANÇA: Iniciamos um loop de animação contínuo.
+    this.animationFrameId = window.requestAnimationFrame(() => this.drawFrame());
+  },
 
-    this.drawFrame(); // Desenha o estado inicial (provavelmente vazio)
+  // Adicionado: Limpa o loop de animação para evitar vazamento de memória.
+  destroyed() {
+    if(this.animationFrameId) {
+      window.cancelAnimationFrame(this.animationFrameId);
+    }
   },
 
   drawFrame() {
-  if (!this.ctx) return;
+    if (!this.ctx) return;
 
-  const { ctx, canvas } = this;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const { ctx, canvas } = this;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const { positions, radii } = this.particleData;
-  const len = positions.length;
+    // 3. MUDANÇA: Iteramos sobre os valores do Map.
+    for (const particle of this.particles.values()) {
+      const { x, y, r } = particle;
 
-  for (let i = 0; i < len; i++) {
-    const [x, y] = positions[i];
-    const r = radii[i];
-
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(59, 130, 246, 0.8)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(30, 64, 175, 1)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.closePath();
-  }
-},
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(59, 130, 246, 0.8)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(30, 64, 175, 1)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.closePath();
+    }
+    
+    // 4. MUDANÇA: Continuamos o loop de animação.
+    this.animationFrameId = window.requestAnimationFrame(() => this.drawFrame());
+  },
 };
 
 let csrfToken = document
