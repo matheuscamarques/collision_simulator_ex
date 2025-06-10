@@ -30,13 +30,9 @@ defmodule CollisionSimulatorWeb.SimulationLive do
           id="physics-canvas"
           width="500"
           height="500"
-          class="border border-gray-800 bg-gray-100"
-          phx-update="ignore"
-        >
-          Seu navegador não suporta o elemento canvas.
-        </canvas>
+          class="border border-gray-800 bg-gray-100 w-full max-w-[500px] aspect-square"
+        />
       </div>
-      Para depuração: <pre class="mt-4 text-xs"><%= inspect @particle_data_for_hook %></pre>
     </div>
     """
   end
