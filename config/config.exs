@@ -16,7 +16,7 @@ config :collision_simulator, CollisionSimulator.CollisionEngine,
     max_y: 600
   }
 
-config :nx, default_backend: EXLA.Backend
+# config :nx, default_backend: EXLA.Backend
 
 config :collision_simulator,
   generators: [timestamp_type: :utc_datetime]

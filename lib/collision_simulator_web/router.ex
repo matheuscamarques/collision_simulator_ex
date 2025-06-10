@@ -17,7 +17,7 @@ defmodule CollisionSimulatorWeb.Router do
   scope "/", CollisionSimulatorWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", SimulationLive
     live "/simulation", SimulationLive
   end
 

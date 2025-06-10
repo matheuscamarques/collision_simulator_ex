@@ -65,7 +65,7 @@ defmodule CollisionSimulator.CollisionEngine do
   # Delta time para os cálculos de física, em segundos.
   @dt @frame_interval_ms / 1000.0
   # Número total de partículas na simulação.
-  @num_particles 50
+  @num_particles 100
   # As fronteiras do mundo da simulação.
   @world_bounds %{x: 0.0, y: 0.0, width: 500, height: 500}
   # Raio padrão para cada partícula.
