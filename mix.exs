@@ -78,7 +78,7 @@ defmodule CollisionSimulator.MixProject do
       # A biblioteca de computação numérica para Elixir.
       {:nx, "~> 0.9.2"},
       # Backend compilador para Nx (usa o XLA do Google para JIT em CPU/GPU).
-      {:exla, ">= 0.9.2"},
+      {:exla, ">= 0.9.2"}
     ]
   end
 
