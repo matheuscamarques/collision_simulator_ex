@@ -79,8 +79,6 @@ defmodule CollisionSimulator.MixProject do
       {:nx, "~> 0.9.2"},
       # Backend compilador para Nx (usa o XLA do Google para JIT em CPU/GPU).
       {:exla, ">= 0.9.2"},
-      # Biblioteca de Quadtree, usada para otimizar colisões.
-      {:quadtree, "~> 0.1.0"}
     ]
   end
 
