@@ -1,4 +1,6 @@
 # CollisionSimulator
+[![Assista ao vídeo no YouTube](https://img.youtube.com/vi/BizYeUibc7A/hqdefault.jpg)](https://youtube.com/shorts/BizYeUibc7A?si=HdH5SU1-k1whUgxX)
+
 
 To start your Phoenix server:
 
