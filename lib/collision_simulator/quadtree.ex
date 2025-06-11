@@ -162,7 +162,6 @@ defmodule CollisionSimulator.Quadtree do
     end)
   end
 
-
   @doc false
   # Divide um nó em 4 subnós e redistribui seus filhos.
   defp split(quadtree) do
@@ -175,10 +174,27 @@ defmodule CollisionSimulator.Quadtree do
 
     # Cria os quatro novos subnós (quadrantes). Ordem: NW, NE, SW, SE
     new_nodes = {
-      %__MODULE__{boundary: %Rectangle{x: x, y: y, width: sub_width, height: sub_height}, level: level + 1},
-      %__MODULE__{boundary: %Rectangle{x: x + sub_width, y: y, width: sub_width, height: sub_height}, level: level + 1},
-      %__MODULE__{boundary: %Rectangle{x: x, y: y + sub_height, width: sub_width, height: sub_height}, level: level + 1},
-      %__MODULE__{boundary: %Rectangle{x: x + sub_width, y: y + sub_height, width: sub_width, height: sub_height}, level: level + 1}
+      %__MODULE__{
+        boundary: %Rectangle{x: x, y: y, width: sub_width, height: sub_height},
+        level: level + 1
+      },
+      %__MODULE__{
+        boundary: %Rectangle{x: x + sub_width, y: y, width: sub_width, height: sub_height},
+        level: level + 1
+      },
+      %__MODULE__{
+        boundary: %Rectangle{x: x, y: y + sub_height, width: sub_width, height: sub_height},
+        level: level + 1
+      },
+      %__MODULE__{
+        boundary: %Rectangle{
+          x: x + sub_width,
+          y: y + sub_height,
+          width: sub_width,
+          height: sub_height
+        },
+        level: level + 1
+      }
     }
 
     # Redistribui os objetos do nó pai para os novos subnós.
@@ -212,10 +228,14 @@ defmodule CollisionSimulator.Quadtree do
     is_right = rect.x > vertical_midpoint
 
     cond do
-      is_top and is_left -> 0 # Noroeste (NW)
-      is_top and is_right -> 1 # Nordeste (NE)
-      is_bottom and is_left -> 2 # Sudoeste (SW)
-      is_bottom and is_right -> 3 # Sudeste (SE)
+      # Noroeste (NW)
+      is_top and is_left -> 0
+      # Nordeste (NE)
+      is_top and is_right -> 1
+      # Sudoeste (SW)
+      is_bottom and is_left -> 2
+      # Sudeste (SE)
+      is_bottom and is_right -> 3
       true -> :parent
     end
   end
@@ -231,8 +251,14 @@ defmodule CollisionSimulator.Quadtree do
     # Esta abordagem é clara e evita a necessidade de `Enum.uniq/1`.
     []
     |> then(fn indices -> if rect.y < hm and rect.x < vm, do: [0 | indices], else: indices end)
-    |> then(fn indices -> if rect.y < hm and rect.x + rect.width > vm, do: [1 | indices], else: indices end)
-    |> then(fn indices -> if rect.y + rect.height > hm and rect.x < vm, do: [2 | indices], else: indices end)
-    |> then(fn indices -> if rect.y + rect.height > hm and rect.x + rect.width > vm, do: [3 | indices], else: indices end)
+    |> then(fn indices ->
+      if rect.y < hm and rect.x + rect.width > vm, do: [1 | indices], else: indices
+    end)
+    |> then(fn indices ->
+      if rect.y + rect.height > hm and rect.x < vm, do: [2 | indices], else: indices
+    end)
+    |> then(fn indices ->
+      if rect.y + rect.height > hm and rect.x + rect.width > vm, do: [3 | indices], else: indices
+    end)
   end
 end
