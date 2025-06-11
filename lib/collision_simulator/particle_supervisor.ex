@@ -40,8 +40,9 @@ defmodule CollisionSimulator.ParticleSupervisor do
           random_in_range(bounds.min_x + radius, bounds.max_x - radius),
           random_in_range(bounds.min_y + radius, bounds.max_y - radius)
         ]
+
         # Gera uma velocidade vetorial aleatória.
-        vel = [Enum.random(-50..50) * 1.0, Enum.random(-50..50) * 1.0]
+        vel = [Enum.random(-150..150) * 1.0, Enum.random(-150..150) * 1.0]
 
         # Cada filho é uma especificação de worker para um GenServer Particle.
         # Esta especificação informa ao supervisor como iniciar e gerenciar o processo.
@@ -50,7 +51,8 @@ defmodule CollisionSimulator.ParticleSupervisor do
           start:
             {CollisionSimulator.Particle, :start_link,
              [[id: i, pos: pos, vel: vel, radius: radius, mass: mass]]},
-          restart: :permanent, # Reinicia o processo se ele falhar.
+          # Reinicia o processo se ele falhar.
+          restart: :permanent,
           type: :worker
         }
       end)

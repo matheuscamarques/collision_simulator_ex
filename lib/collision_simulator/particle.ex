@@ -16,8 +16,10 @@ defmodule CollisionSimulator.Particle do
   alias CollisionSimulator.CollisionEngine
 
   @frame_interval_ms 16
-  @dt @frame_interval_ms / 1000.0 # Delta time em segundos para cálculos de física.
-  @simulation_topic "particle_updates" # Tópico do PubSub para atualizações.
+  # Delta time em segundos para cálculos de física.
+  @dt @frame_interval_ms / 1000.0
+  # Tópico do PubSub para atualizações.
+  @simulation_topic "particle_updates"
 
   @type id :: non_neg_integer()
   @type vec2 :: [float()]

@@ -32,7 +32,7 @@ defmodule CollisionSimulatorWeb.SimulationLive do
     """
   end
 
-   # NOTA: O handle_info foi completamente alterado para lidar com o novo evento.
+  # NOTA: O handle_info foi completamente alterado para lidar com o novo evento.
   @impl true
   def handle_info({:particle_moved, payload}, socket) do
     # Simplesmente encaminha o payload da partícula para o hook no frontend

@@ -36,16 +36,20 @@ defmodule CollisionSimulator.Physics do
     # Verifica e resolve colisões no eixo X.
     {vx, x} =
       cond do
-        x - r < min_x -> {-vx, min_x + r} # Colisão à esquerda
-        x + r > max_x -> {-vx, max_x - r} # Colisão à direita
+        # Colisão à esquerda
+        x - r < min_x -> {-vx, min_x + r}
+        # Colisão à direita
+        x + r > max_x -> {-vx, max_x - r}
         true -> {vx, x}
       end
 
     # Verifica e resolve colisões no eixo Y.
     {vy, y} =
       cond do
-        y - r < min_y -> {-vy, min_y + r} # Colisão superior
-        y + r > max_y -> {-vy, max_y - r} # Colisão inferior
+        # Colisão superior
+        y - r < min_y -> {-vy, min_y + r}
+        # Colisão inferior
+        y + r > max_y -> {-vy, max_y - r}
         true -> {vy, y}
       end
 
@@ -73,7 +77,8 @@ defmodule CollisionSimulator.Physics do
 
     # Lógica de detecção de colisão.
     diff = pos_i - pos_j
-    dist_sq = Nx.sum(diff * diff, axes: [1], keep_axes: true) # Distância ao quadrado (mais rápido)
+    # Distância ao quadrado (mais rápido)
+    dist_sq = Nx.sum(diff * diff, axes: [1], keep_axes: true)
     radius_sum = r_i + r_j
     min_dist_sq = radius_sum * radius_sum
 
@@ -123,7 +128,8 @@ defmodule CollisionSimulator.Physics do
     # Lógica de resolução de colisão elástica 2D.
     normal = pos_j - pos_i
     distance = Nx.sqrt(Nx.sum(normal * normal, axes: [1], keep_axes: true))
-    unit_normal = normal / (distance + 1.0e-6) # Adiciona epsilon para evitar divisão por zero.
+    # Adiciona epsilon para evitar divisão por zero.
+    unit_normal = normal / (distance + 1.0e-6)
 
     velocity_diff = vel_i - vel_j
     dot_product = Nx.sum(velocity_diff * unit_normal, axes: [1], keep_axes: true)

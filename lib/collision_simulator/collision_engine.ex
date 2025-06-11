@@ -34,10 +34,11 @@ defmodule CollisionSimulator.CollisionEngine do
   @typep world_bounds :: %{min_x: float(), max_x: float(), min_y: float(), max_y: float()}
   @type state :: %{world_bounds: world_bounds()}
 
-  @frame_interval_ms 16 # Aproximadamente 60 quadros por segundo (1000ms / 60fps)
+  # Aproximadamente 60 quadros por segundo (1000ms / 60fps)
+  @frame_interval_ms 2
   @num_particles 100
   @world_bounds %{x: 0.0, y: 0.0, width: 500, height: 500}
-  @particle_radius 5
+  @particle_radius 2
   @particle_mass 5.0
 
   # --- Funções de API Pública ---
@@ -172,7 +173,8 @@ defmodule CollisionSimulator.CollisionEngine do
         r_e = r + 1.0e-6
 
         SpatialHash.query(spatial_hash, {px, py}, r_e)
-        |> Enum.filter(&(&1 > index)) # Evita pares duplicados (ex: [1,0]) e auto-colisão.
+        # Evita pares duplicados (ex: [1,0]) e auto-colisão.
+        |> Enum.filter(&(&1 > index))
         |> Enum.map(&[index, &1])
       end,
       max_concurrency: System.schedulers_online() * 2,
@@ -209,7 +211,8 @@ defmodule CollisionSimulator.CollisionEngine do
       timeout: 5000,
       ordered: false
     )
-    |> Stream.run() # Executa o stream.
+    # Executa o stream.
+    |> Stream.run()
   end
 
   @doc """

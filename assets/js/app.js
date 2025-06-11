@@ -57,28 +57,35 @@ Hooks.CanvasHook = {
   },
 
   drawFrame() {
-    if (!this.ctx) return;
+  if (!this.ctx) return;
 
-    const { ctx, canvas } = this;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const { ctx, canvas } = this;
 
-    // 3. MUDANÇA: Iteramos sobre os valores do Map.
-    for (const particle of this.particles.values()) {
-      const { x, y, r } = particle;
+  // Fundo preto
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(59, 130, 246, 0.8)";
-      ctx.fill();
-      ctx.strokeStyle = "rgba(30, 64, 175, 1)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.closePath();
-    }
-    
-    // 4. MUDANÇA: Continuamos o loop de animação.
-    this.animationFrameId = window.requestAnimationFrame(() => this.drawFrame());
-  },
+  // Itera com índice
+  const entries = Array.from(this.particles.values());
+  entries.forEach((particle, index) => {
+    const { x, y, r } = particle;
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+
+    // Índices pares = vermelho, ímpares = verde
+    ctx.fillStyle = index % 2 === 0 ? "red" : "green";
+    ctx.fill();
+
+    ctx.strokeStyle = "white"; // Contorno branco para melhor visualização
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.closePath();
+  });
+
+  this.animationFrameId = window.requestAnimationFrame(() => this.drawFrame());
+  }
 };
 
 let csrfToken = document
