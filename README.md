@@ -1,4 +1,8 @@
 # CollisionSimulator
+
+Relatório detalhado em PDF: [Relatório Detalhado: Arquitetura Orientada a Atores em Elixir para Simulação de 
+Colisões Elásticas Concorrentes](/Relatório%20Detalhado_%20Arquitetura%20Orientada%20a%20Atores%20em%20Elixir%20para%20Simulação%20de%20Colisões%20Elásticas%20Concorrentes.pdf)
+
 [![Assista ao vídeo no YouTube](https://img.youtube.com/vi/BizYeUibc7A/hqdefault.jpg)](https://youtube.com/shorts/BizYeUibc7A?si=HdH5SU1-k1whUgxX)
 
 
